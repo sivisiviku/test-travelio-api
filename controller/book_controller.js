@@ -36,6 +36,45 @@ exports.read = async (req, res) => {
   return res.send(finalResponse);
 };
 
+exports.readFavorite = async (req, res) => {
+  try {
+    const offset = (req.body.page - 1) * req.body.limit;
+    const totalData = await model.read(
+      `count(id) as total_data`,
+      `favorites`,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+    const totalPages = Math.ceil(totalData.data[0].total_data / req.body.limit);
+    const data = await model.read(
+      `*`,
+      `favorites`,
+      null,
+      null,
+      null,
+      req.body.limit,
+      offset
+    );
+    return res.send({
+      status: "success",
+      message: {
+        total_pages: totalPages,
+        total_data: totalData.data[0].total_data,
+      },
+      data: data.data,
+    });
+  } catch (err) {
+    return res.send({
+      status: "error",
+      message: err.message,
+      data: null,
+    });
+  }
+};
+
 exports.create = async (req, res) => {
   try {
     return res.send(
