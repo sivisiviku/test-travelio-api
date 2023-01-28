@@ -70,6 +70,9 @@ exports.readFavorite = async (req, res) => {
       req.body.limit,
       offset
     );
+    for (i = 0; i < data.data.length; i++) {
+      data.data[i].isFavorite = true;
+    }
     return res.send({
       status: "success",
       message: {
